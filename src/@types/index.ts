@@ -181,7 +181,7 @@ export interface Tax {
 
 export interface MetaDataLineItem {
   key: string;
-  value: string;
+  value: string | number | boolean | object;
 }
 
 export interface Order {
@@ -341,4 +341,73 @@ export interface Refund {
   id: number;
   reason: string;
   total: string;
+}
+export interface CheckoutCart {
+  payment_method: string;
+  payment_method_title: string;
+  billing: Billing;
+  shipping: Shipping;
+  line_items: CheckoutLineItem[];
+  shipping_lines?: ShippingLineInput[];
+  customer_id?: number;
+  meta_data?: MetaDataLineItem[];
+  set_paid: boolean;
+}
+export interface CheckoutLineItem {
+  product_id: number;
+  variation_id?: number; // optional if simple product
+  quantity: number;
+}
+
+export interface ShippingLineInput {
+  method_id: string;
+  method_title: string;
+  total: string;
+  total_tax?: string;
+  taxes?: Tax[];
+  meta_data?: MetaData[];
+}
+
+export interface Billing {
+  first_name: string;
+  last_name: string;
+  company: string;
+  address_1: string;
+  address_2: string;
+  city: string;
+  state: string;
+  postcode: string;
+  country: string;
+  email: string;
+  phone: string;
+}
+
+export interface Shipping {
+  first_name: string;
+  last_name: string;
+  company: string;
+  address_1: string;
+  address_2: string;
+  city: string;
+  state: string;
+  postcode: string;
+  country: string;
+  email: string;
+}
+
+export interface MetaDataLineItem {
+  key: string;
+  value: string | number | boolean | object;
+}
+
+export interface Tax {
+  id: number;
+  total: string;
+  subtotal: string;
+}
+
+export interface MetaData {
+  id: number;
+  key: string;
+  value: string;
 }
