@@ -185,48 +185,84 @@ export interface MetaDataLineItem {
 }
 
 export interface Order {
-  id: number;
-  parent_id: number;
-  number: string;
-  order_key: string;
-  created_via: string;
-  version: string;
-  status: string;
-  currency: string;
-  date_created: Date;
-  date_created_gmt: Date;
-  date_modified: Date;
-  date_modified_gmt: Date;
-  discount_total: string;
-  discount_tax: string;
-  shipping_total: string;
-  shipping_tax: string;
-  cart_tax: string;
-  total: string;
-  total_tax: string;
-  prices_include_tax: boolean;
-  customer_id: number;
-  customer_ip_address: string;
-  customer_user_agent: string;
-  customer_note: string;
-  billing: Billing;
-  shipping: Shipping;
-  payment_method: string;
-  payment_method_title: string;
-  transaction_id: string;
-  date_paid?: Date | null;
-  date_paid_gmt?: Date | null;
-  date_completed?: Date | null;
-  date_completed_gmt?: Date | null;
-  cart_hash: string;
-  meta_data: MetaData[];
-  line_items: LineItem[];
-  tax_lines: Tax[];
-  shipping_lines: ShippingLine[];
-  fee_lines: FeeLine[];
-  coupon_lines: Coupon[];
-  refunds: Refund[];
-  _links: Links;
+  // id: number;
+  // parent_id: number;
+  // number: string;
+  // order_key: string;
+  // created_via: string;
+  // version: string;
+  // status: string;
+  // currency: string;
+  // date_created: Date;
+  // date_created_gmt: Date;
+  // date_modified: Date;
+  // date_modified_gmt: Date;
+  // discount_total: string;
+  // discount_tax: string;
+  // shipping_total: string;
+  // shipping_tax: string;
+  // cart_tax: string;
+  // total: string;
+  // total_tax: string;
+  // prices_include_tax: boolean;
+  // customer_id: number;
+  // customer_ip_address: string;
+  // customer_user_agent: string;
+  // customer_note: string;
+  // billing: Billing;
+  // shipping: Shipping;
+  // payment_method: string;
+  // payment_method_title: string;
+  // transaction_id: string;
+  // date_paid?: Date | null;
+  // date_paid_gmt?: Date | null;
+  // date_completed?: Date | null;
+  // date_completed_gmt?: Date | null;
+  // cart_hash: string;
+  // meta_data: MetaData[];
+  // line_items: LineItem[];
+  // tax_lines: Tax[];
+  // shipping_lines: ShippingLine[];
+  // fee_lines: FeeLine[];
+  // coupon_lines: Coupon[];
+  // refunds: Refund[];
+  // _links: Links;
+
+
+
+
+
+ id: number;
+order_number: number;
+created_at: string;
+updated_at: string;
+created_at: string;
+completed_at: string;
+status: string;
+currency: string;
+total: string;
+subtotal: string;
+total_line_items_quantity: number;
+total_tax: string;
+total_shipping: string;
+cart_tax: string;
+shipping_tax: string;
+total_discount: string;
+shipping_methods: string;
+payment_details: [];
+billing_address: Billing[];
+shipping_address: Shipping[];
+note: string;
+customer_ip: string;
+customer_user_agent: string;
+customer_id: number;
+view_order_url: string;
+line_items: [];
+shipping_lines: [];
+tax_lines: [];
+fee_lines: [];
+coupon_lines: [];
+customer: Customer[];
 }
 
 export interface Billing {
