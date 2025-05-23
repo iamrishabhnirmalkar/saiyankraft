@@ -1,5 +1,5 @@
 import { Product } from "@/@types";
-import wooCommerceClient from "@/services/woocommerce";
+import { wooCommerceClient } from "@/services/woocommerce";
 
 export const getAllProducts = async (): Promise<Product[]> => {
   try {

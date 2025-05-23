@@ -228,41 +228,36 @@ export interface Order {
   // refunds: Refund[];
   // _links: Links;
 
-
-
-
-
- id: number;
-order_number: number;
-created_at: string;
-updated_at: string;
-created_at: string;
-completed_at: string;
-status: string;
-currency: string;
-total: string;
-subtotal: string;
-total_line_items_quantity: number;
-total_tax: string;
-total_shipping: string;
-cart_tax: string;
-shipping_tax: string;
-total_discount: string;
-shipping_methods: string;
-payment_details: [];
-billing_address: Billing[];
-shipping_address: Shipping[];
-note: string;
-customer_ip: string;
-customer_user_agent: string;
-customer_id: number;
-view_order_url: string;
-line_items: [];
-shipping_lines: [];
-tax_lines: [];
-fee_lines: [];
-coupon_lines: [];
-customer: Customer[];
+  id: number;
+  order_number: number;
+  updated_at: string;
+  created_at: string;
+  completed_at: string;
+  status: string;
+  currency: string;
+  total: string;
+  subtotal: string;
+  total_line_items_quantity: number;
+  total_tax: string;
+  total_shipping: string;
+  cart_tax: string;
+  shipping_tax: string;
+  total_discount: string;
+  shipping_methods: string;
+  payment_details: [];
+  billing_address: Billing[];
+  shipping_address: Shipping[];
+  note: string;
+  customer_ip: string;
+  customer_user_agent: string;
+  customer_id: number;
+  view_order_url: string;
+  line_items: [];
+  shipping_lines: [];
+  tax_lines: [];
+  fee_lines: [];
+  coupon_lines: [];
+  customer: Customer[];
 }
 
 export interface Billing {
@@ -337,6 +332,8 @@ export interface Variation {
 
 export interface Customer {
   id: number;
+  username: string;
+  password: string;
   date_created: Date;
   date_created_gmt: Date;
   date_modified: Date;
@@ -345,7 +342,6 @@ export interface Customer {
   first_name: string;
   last_name: string;
   role: string;
-  username: string;
   billing: Billing;
   shipping: Shipping;
   is_paying_customer: boolean;
