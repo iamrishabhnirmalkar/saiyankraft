@@ -6,8 +6,8 @@ interface WishlistState {
   items: Product[];
   totalItems: number;
   addToWishlist: (product: Product) => void;
-  removeFromWishlist: (productId: number) => void; // productId as number to match Product.id type
-  isInWishlist: (productId: number) => boolean; // same here
+  removeFromWishlist: (productId: number) => void;
+  isInWishlist: (productId: number) => boolean;
 }
 
 export const useWishlistStore = create<WishlistState>()(
@@ -16,32 +16,26 @@ export const useWishlistStore = create<WishlistState>()(
       items: [],
       totalItems: 0,
 
-      addToWishlist: (product: Product) =>
+      addToWishlist: (product) =>
         set((state) => {
-          // Check if product already in wishlist by id
-          if (state.items.some((item) => item.id === product.id)) {
-            return state;
-          }
-          return {
-            items: [...state.items, product],
-            totalItems: state.totalItems + 1,
-          };
+          if (state.items.some((item) => item.id === product.id)) return state;
+          const updated = [...state.items, product];
+          return { items: updated, totalItems: updated.length };
         }),
 
-      removeFromWishlist: (productId: number) =>
-        set((state) => ({
-          // Filter out the product with matching id
-          items: state.items.filter((item) => item.id !== productId),
-          totalItems: state.totalItems - 1,
-        })),
+      removeFromWishlist: (productId) =>
+        set((state) => {
+          const updated = state.items.filter((item) => item.id !== productId);
+          return { items: updated, totalItems: updated.length };
+        }),
 
-      isInWishlist: (productId: number) => {
+      isInWishlist: (productId) => {
         const state = get();
         return state.items.some((item) => item.id === productId);
       },
     }),
     {
-      name: "wishlist-storage", // name of item in localStorage
+      name: "wishlist-storage",
     }
   )
 );

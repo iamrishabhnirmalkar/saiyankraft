@@ -1,81 +1,48 @@
-"use client";
+// pages/product/[id].tsx (or app/product/[id]/page.tsx if app router)
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+// Make sure getProductById is exported from "@/lib/api/api"
+// If getProductById is not exported, replace with the correct function or fix the export in "@/lib/api/api"
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart, Heart } from "lucide-react";
-import { useCartStore } from "@/store/cartStore";
-import { useWishlistStore } from "@/store/wishlistStore";
 import { Product } from "@/@types";
+import { getSingleProductData } from "@/lib/api/api";
+import { useRouter } from "next/router";
 
-// Remove the local Product interface and import the shared Product type
-// Update the import path below to the actual location of your Product type
+export default function ProductDetailPage() {
+  const router = useRouters();
+  const { id } = router.query;
 
-interface ProductPageProps {
-  params: { id: string };
-}
+  const [product, setProduct] = React.useState<Product | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
 
-export default function ProductPage({ params }: ProductPageProps) {
-  const [product, setProduct] = useState<Product | null>(null);
+  React.useEffect(() => {
+    if (!id) return;
 
-  // Zustand stores for cart and wishlist
-  const addToCart = useCartStore((state) => state.addToCart);
-  const isInWishlist = useWishlistStore((state) =>
-    product ? state.isInWishlist(product.id) : false
-  );
-  const addToWishlist = useWishlistStore((state) => state.addToWishlist);
-  const removeFromWishlist = useWishlistStore(
-    (state) => state.removeFromWishlist
-  );
+    setLoading(true);
+    getSingleProductData(Number(id))
+      .then((data: Product | null) => {
+        if (!data) {
+          setError("Product not found");
+          setProduct(null);
+        } else {
+          setProduct(data);
+          setError("");
+        }
+      })
+      .catch(() => setError("Failed to load product"))
+      .finally((): void => setLoading(false));
+  }, [id]);
 
-  useEffect(() => {
-    async function fetchProduct() {
-      try {
-        // Replace this with your actual API call
-        const res = await fetch(`/api/products/${params.id}`);
-        if (!res.ok) throw new Error("Failed to fetch product");
-        const data = await res.json();
-        setProduct(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchProduct();
-  }, [params.id]);
-
-  const toggleWishlist = () => {
-    if (!product) return;
-    if (isInWishlist) {
-      removeFromWishlist(product.id);
-    } else {
-      addToWishlist(product);
-    }
-  };
-
-  if (!product) {
-    return <div className="p-4 text-center">Loading...</div>;
-  }
-
-  const priceDisplay =
-    product.sale_price && +product.sale_price > 0 ? (
-      <div className="flex gap-2 text-lg font-semibold">
-        <span className="line-through text-muted-foreground">
-          ₹{product.price}
-        </span>
-        <span className="text-red-500">₹{product.sale_price}</span>
-      </div>
-    ) : (
-      <div className="text-lg font-semibold">₹{product.price}</div>
-    );
+  if (loading) return <div>Loading product details...</div>;
+  if (error) return <div className="text-red-600">{error}</div>;
+  if (!product) return null;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold">{product.name}</h1>
-
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Product Image */}
-        <div className="relative w-full md:w-1/2 h-96 rounded-lg overflow-hidden">
+    <main className="max-w-4xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+      <div className="flex gap-6">
+        <div className="w-1/2 relative h-96 rounded-xl overflow-hidden">
           <Image
             src={product.images?.[0]?.src || "/placeholder.jpg"}
             alt={product.name}
@@ -85,41 +52,22 @@ export default function ProductPage({ params }: ProductPageProps) {
             priority
           />
         </div>
-
-        {/* Details */}
-        <div className="flex flex-col justify-between md:w-1/2">
-          <div className="mb-4">
-            <p className="whitespace-pre-line text-gray-700">
-              {product.description}
-            </p>
+        <div className="w-1/2">
+          <p className="mb-4">
+            {product.description || "No description available."}
+          </p>
+          <div className="text-xl font-semibold mb-4">
+            Price: ₹
+            {product.sale_price && +product.sale_price > 0
+              ? product.sale_price
+              : product.price}
           </div>
-
-          {priceDisplay}
-
-          <div className="flex items-center gap-4 mt-4">
-            <Button
-              onClick={() => addToCart(product)}
-              className="flex items-center gap-2"
-              size="lg"
-            >
-              <ShoppingCart /> Add to Cart
-            </Button>
-            <Button
-              onClick={toggleWishlist}
-              variant={isInWishlist ? "default" : "outline"}
-              size="lg"
-              className="flex items-center gap-2"
-            >
-              <Heart
-                className={`h-5 w-5 ${
-                  isInWishlist ? "fill-red-500 text-red-500" : ""
-                }`}
-              />
-              {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-            </Button>
-          </div>
+          {/* You can add Add to Cart / Wishlist buttons here like in Productcard */}
         </div>
       </div>
-    </div>
+    </main>
   );
+}
+function useRouters() {
+  return useRouter();
 }

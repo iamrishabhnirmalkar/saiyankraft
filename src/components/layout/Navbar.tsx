@@ -2,38 +2,33 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { useAuthStore } from "@/store/authStore";
 
 export default function Navbar() {
   const { totalItems: cartItems } = useCartStore();
   const { totalItems: wishlistItems } = useWishlistStore();
+  const { token, logout } = useAuthStore();
+
   const [isClient, setIsClient] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    const token = Cookies.get("auth_token"); // assuming you stored JWT token here
-    setIsLoggedIn(!!token);
   }, []);
 
-  // Logout handler
   const handleLogout = () => {
-    Cookies.remove("auth_token");
-    setIsLoggedIn(false);
-    // Optional: redirect to home or login page after logout
+    logout();
     window.location.href = "/";
   };
 
   return (
     <div className="bg-orange-500 w-full py-3 px-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div>
-          <Link href="/">
-            <p className="text-white font-semibold text-lg">Home</p>
-          </Link>
-        </div>
+        <Link href="/">
+          <p className="text-white font-semibold text-lg">Home</p>
+        </Link>
+
         <div className="flex items-center space-x-6">
           <Link href="/cart" className="relative">
             <p className="text-white font-semibold">Cart</p>
@@ -43,6 +38,7 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+
           <Link href="/wishlist" className="relative">
             <p className="text-white font-semibold">Wishlist</p>
             {isClient && wishlistItems > 0 && (
@@ -52,8 +48,7 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* Show Login or Logout based on login status */}
-          {!isLoggedIn ? (
+          {!token ? (
             <Link href="/auth">
               <p className="text-white font-semibold cursor-pointer">Login</p>
             </Link>

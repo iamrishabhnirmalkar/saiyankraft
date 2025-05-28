@@ -65,6 +65,18 @@ export interface Product {
   menu_order: number;
   meta_data: MetaData[];
   _links: Links;
+  brand?: Brand;
+}
+
+export interface Brand {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: Image;
+  menu_order?: number;
+  count?: number;
+  _links?: Links;
 }
 
 export interface Category {
@@ -185,49 +197,6 @@ export interface MetaDataLineItem {
 }
 
 export interface Order {
-  // id: number;
-  // parent_id: number;
-  // number: string;
-  // order_key: string;
-  // created_via: string;
-  // version: string;
-  // status: string;
-  // currency: string;
-  // date_created: Date;
-  // date_created_gmt: Date;
-  // date_modified: Date;
-  // date_modified_gmt: Date;
-  // discount_total: string;
-  // discount_tax: string;
-  // shipping_total: string;
-  // shipping_tax: string;
-  // cart_tax: string;
-  // total: string;
-  // total_tax: string;
-  // prices_include_tax: boolean;
-  // customer_id: number;
-  // customer_ip_address: string;
-  // customer_user_agent: string;
-  // customer_note: string;
-  // billing: Billing;
-  // shipping: Shipping;
-  // payment_method: string;
-  // payment_method_title: string;
-  // transaction_id: string;
-  // date_paid?: Date | null;
-  // date_paid_gmt?: Date | null;
-  // date_completed?: Date | null;
-  // date_completed_gmt?: Date | null;
-  // cart_hash: string;
-  // meta_data: MetaData[];
-  // line_items: LineItem[];
-  // tax_lines: Tax[];
-  // shipping_lines: ShippingLine[];
-  // fee_lines: FeeLine[];
-  // coupon_lines: Coupon[];
-  // refunds: Refund[];
-  // _links: Links;
-
   id: number;
   order_number: number;
   updated_at: string;
@@ -244,7 +213,7 @@ export interface Order {
   shipping_tax: string;
   total_discount: string;
   shipping_methods: string;
-  payment_details: [];
+  payment_details: PaymentDetail[];
   billing_address: Billing[];
   shipping_address: Shipping[];
   note: string;
@@ -252,11 +221,11 @@ export interface Order {
   customer_user_agent: string;
   customer_id: number;
   view_order_url: string;
-  line_items: [];
-  shipping_lines: [];
-  tax_lines: [];
-  fee_lines: [];
-  coupon_lines: [];
+  line_items: LineItem[];
+  shipping_lines: ShippingLine[];
+  tax_lines: Tax[];
+  fee_lines: FeeLine[];
+  coupon_lines: Coupon[];
   customer: Customer[];
 }
 
@@ -369,11 +338,20 @@ export interface Coupon {
   meta_data: MetaData[];
 }
 
+export interface PaymentDetail {
+  method_id: string;
+  method_title: string;
+  paid: boolean;
+  transaction_id?: string;
+  [key: string]: string | number | boolean | undefined;
+}
+
 export interface Refund {
   id: number;
   reason: string;
   total: string;
 }
+
 export interface CheckoutCart {
   payment_method: string;
   payment_method_title: string;
@@ -385,9 +363,10 @@ export interface CheckoutCart {
   meta_data?: MetaDataLineItem[];
   set_paid: boolean;
 }
+
 export interface CheckoutLineItem {
   product_id: number;
-  variation_id?: number; // optional if simple product
+  variation_id?: number;
   quantity: number;
 }
 
@@ -400,46 +379,45 @@ export interface ShippingLineInput {
   meta_data?: MetaData[];
 }
 
-export interface Billing {
-  first_name: string;
-  last_name: string;
-  company: string;
-  address_1: string;
-  address_2: string;
-  city: string;
-  state: string;
-  postcode: string;
-  country: string;
+// OAuth Parameters Interface
+export interface OAuthParams {
+  oauth_consumer_key: string;
+  oauth_nonce: string;
+  oauth_signature_method: string;
+  oauth_timestamp: number;
+  oauth_version: string;
+  oauth_signature: string;
+}
+
+// User Registration Interface
+export interface UserRegistrationData {
+  username: string;
   email: string;
-  phone: string;
+  password: string;
+  first_name?: string;
+  last_name?: string;
+  role?: string;
 }
 
-export interface Shipping {
-  first_name: string;
-  last_name: string;
-  company: string;
-  address_1: string;
-  address_2: string;
-  city: string;
-  state: string;
-  postcode: string;
-  country: string;
-  email: string;
+// User Login Interface
+export interface UserLoginData {
+  username: string;
+  password: string;
 }
 
-export interface MetaDataLineItem {
-  key: string;
-  value: string | number | boolean | object;
+// JWT Token Response Interface
+export interface JWTTokenResponse {
+  token: string;
+  user_email: string;
+  user_nicename: string;
+  user_display_name: string;
 }
 
-export interface Tax {
+// Cart Item Interface (for localStorage)
+export interface CartItem {
   id: number;
-  total: string;
-  subtotal: string;
-}
-
-export interface MetaData {
-  id: number;
-  key: string;
-  value: string;
+  quantity: number;
+  name?: string;
+  price?: string;
+  image?: string;
 }

@@ -11,8 +11,8 @@ interface CartState {
   totalItems: number;
   totalAmount: number;
   addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: number) => void; // changed to number
-  updateQuantity: (productId: number, quantity: number) => void; // changed to number
+  removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
 }
 
@@ -47,7 +47,6 @@ export const useCartStore = create<CartState>()(
                 : item
             );
             return {
-              ...state,
               items: updatedItems,
               totalItems: updatedItems.reduce(
                 (acc, item) => acc + item.quantity,
@@ -62,24 +61,17 @@ export const useCartStore = create<CartState>()(
 
           const newItem = { ...product, quantity };
           return {
-            ...state,
             items: [...state.items, newItem],
             totalItems: state.totalItems + quantity,
             totalAmount: state.totalAmount + getItemPrice(product) * quantity,
           };
         }),
-      removeFromCart: (
-        productId: number // number here
-      ) =>
+      removeFromCart: (productId: number) =>
         set((state) => {
-          const item = state.items.find((item) => item.id === productId);
-          if (!item) return state;
-
           const updatedItems = state.items.filter(
             (item) => item.id !== productId
           );
           return {
-            ...state,
             items: updatedItems,
             totalItems: updatedItems.reduce(
               (acc, item) => acc + item.quantity,
@@ -91,10 +83,7 @@ export const useCartStore = create<CartState>()(
             ),
           };
         }),
-      updateQuantity: (
-        productId: number,
-        quantity: number // number here
-      ) =>
+      updateQuantity: (productId: number, quantity: number) =>
         set((state) => {
           const updatedItems = state.items.map((item) =>
             item.id === productId
@@ -104,9 +93,7 @@ export const useCartStore = create<CartState>()(
           const filteredItems = updatedItems.filter(
             (item) => item.quantity > 0
           );
-
           return {
-            ...state,
             items: filteredItems,
             totalItems: filteredItems.reduce(
               (acc, item) => acc + item.quantity,
@@ -128,6 +115,32 @@ export const useCartStore = create<CartState>()(
     {
       name: "cart-storage",
       version: 1,
+      migrate: (persistedState: unknown, version: number): CartState => {
+        const state = persistedState as Partial<CartState>;
+        // If old version is 0 or undefined (no version), migrate here:
+        if (!version || version === 0) {
+          // You can modify or normalize the persistedState if needed
+          return {
+            items: state?.items || [],
+            totalItems: state?.totalItems || 0,
+            totalAmount: state?.totalAmount || 0,
+            addToCart: () => {},
+            removeFromCart: () => {},
+            updateQuantity: () => {},
+            clearCart: () => {},
+          };
+        }
+        // If version matches current, return as is
+        return {
+          items: state?.items || [],
+          totalItems: state?.totalItems || 0,
+          totalAmount: state?.totalAmount || 0,
+          addToCart: () => {},
+          removeFromCart: () => {},
+          updateQuantity: () => {},
+          clearCart: () => {},
+        };
+      },
     }
   )
 );
